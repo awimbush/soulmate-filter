@@ -18,7 +18,7 @@ module Soulmate
     end
 
     def filter_key(dimension, value)
-      "#{filters}:#{normalize(dimension)}:#{normalize(value)}"
+      "#{filters}:#{normalize(dimension)}:#{normalize(value).parameterize}"
     end
 
   end
