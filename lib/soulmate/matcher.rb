@@ -12,8 +12,8 @@ module Soulmate
       return [] if words.empty?
 
       filter_text = options[:filter_by].map do |key, value|
-        "#{key.to_s.singularize}:#{value.join("|")}"
-      end.join(":").downcase
+        "#{clean(key.to_s)}:#{clean(value.join("|"))}"
+      end.join(":")
 
       cachekey = "#{cachebase}:" + words.join('|') + ":" + filter_text
 
@@ -21,18 +21,17 @@ module Soulmate
         interkeys = words.map { |w| "#{base}:#{w}" }
         options[:filter_by].each do |key, values|
           if values.length > 1
-            filter_cache_key = "#{cachebase}:filters:#{normalize(key.to_s.singularize)}:" + values.join('|').downcase 
+            filter_cache_key = "#{cachebase}:filters:#{key.to_s}:" + values.join('|')
             if !Soulmate.redis.exists(filter_cache_key) || Soulmate.redis.exists(filter_cache_key) == 0 
               unionkeys = [] 
               values.each do |value|
-                value = value.downcase.strip.gsub(/ /, '')
-                unionkeys << filter_key(key.to_s.singularize.downcase, value.downcase)
+                unionkeys << filter_key(key.to_s, value)
               end
               Soulmate.redis.zunionstore(filter_cache_key, unionkeys) 
               Soulmate.redis.expire(filter_cache_key, 10 * 60)
             end
           else
-            filter_cache_key = filter_key(key.to_s.singularize, values.first)
+            filter_cache_key = filter_key(key.to_s, values.first)
           end
           interkeys << filter_cache_key 
           end 
