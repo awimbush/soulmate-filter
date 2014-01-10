@@ -41,7 +41,7 @@ module Soulmate
 
 
         filterable_by.each do |filter|
-          Soulmate.redis.zadd filter_key(filter.to_s.downcase, item["data"][filter.to_s].downcase), item["score"], item["id"]
+          Soulmate.redis.zadd filter_key(filter.to_s, item["data"][filter.to_s]), item["score"], item["id"]
         end
 
         phrase = ([item["term"]] + (item["aliases"] || [])).join(' ')

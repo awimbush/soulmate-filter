@@ -17,8 +17,12 @@ module Soulmate
       str.downcase.gsub(/[^\p{Word}\ ]/i, '').strip
     end
 
+    def clean(str)
+      str.strip.downcase.parameterize
+    end
+
     def filter_key(dimension, value)
-      "#{filters}:#{normalize(dimension)}:#{normalize(value).parameterize}"
+      "#{filters}:#{clean(dimension)}:#{clean(value)}"
     end
 
   end
